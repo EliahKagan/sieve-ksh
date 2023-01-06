@@ -1,0 +1,3 @@
+#!/usr/bin/env ksh
+
+diff <(./sieve.rb "$@") <(./sieve "$@") && print 'OK.'
