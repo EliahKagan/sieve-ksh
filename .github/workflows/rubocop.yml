@@ -31,6 +31,7 @@ jobs:
           q="'"
           qq='"'
           sed -i "s/$qq/$q/g" Gemfile
+          cat Gemfile
         fi
 
     # This step is not necessary if you add the gem to your Gemfile
