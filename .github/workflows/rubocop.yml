@@ -25,7 +25,12 @@ jobs:
 
     - name: Create Gemfile if absent
       run: |
-        test -e Gemfile || bundle init
+        if ! test -e Gemfile; then
+          bundle init
+          q="'"
+          qq='"'
+          sed -i "s/$qq/$q/g" Gemfile
+        fi
 
     # This step is not necessary if you add the gem to your Gemfile
     - name: Install Code Scanning integration
