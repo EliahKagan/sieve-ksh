@@ -25,6 +25,7 @@ jobs:
 
     - name: Create Gemfile if absent
       run: |
+        set -x
         if ! test -e Gemfile; then
           bundle init
           q="'"
