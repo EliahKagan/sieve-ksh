@@ -1,0 +1,56 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# pulled from repo
+name: "Rubocop"
+
+on: [push, pull_request]
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6
+
+    - name: Create Gemfile if absent
+      run: |
+        if ! test -e Gemfile; then
+          bundle init
+          touch .new_gemfile
+        fi
+
+    # This step is not necessary if you add the gem to your Gemfile
+    - name: Install Code Scanning integration
+      run: bundle add code-scanning-rubocop --version 0.3.0 --skip-install
+
+    - name: Install dependencies
+      run: bundle install
+
+    - name: Make Gemfile use single quotes if new
+      run: |
+        if test -e .new_gemfile; then
+          q="'"
+          qq='"'
+          sed -i "s/$qq/$q/g" Gemfile
+        fi
+
+    # Modified to print results in log and fail if there are any errors/warnings.
+    - name: Rubocop run
+      run: |
+        bundle exec rubocop --require code_scanning --format progress --format CodeScanning::SarifFormatter -o rubocop.sarif
+
+    - name: Upload Sarif output
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: rubocop.sarif
