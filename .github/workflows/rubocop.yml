@@ -6,7 +6,12 @@
 # pulled from repo
 name: "Rubocop"
 
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+  pull_request:
+
 
 jobs:
   rubocop:
