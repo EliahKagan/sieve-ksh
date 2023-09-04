@@ -51,7 +51,9 @@ jobs:
         bundle exec rubocop --require code_scanning --format progress --format CodeScanning::SarifFormatter -o rubocop.sarif
 
     - name: Upload Sarif output
-      if: github.event_name != 'push' || !startsWith(github.ref, 'refs/heads/dependabot/')
+      if: |
+        !cancelled() &&
+        (github.event_name != 'push' || !startsWith(github.ref, 'refs/heads/dependabot/'))
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: rubocop.sarif
